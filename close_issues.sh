@@ -1,5 +1,6 @@
 #!/bin/bash
 set -o errexit
+purple='\e[1;35m'
 green='\e[0;32m'
 red='\e[0;31m'
 NC='\e[0m'
@@ -28,9 +29,12 @@ shift "$((OPTIND-1))"
 ITEMS=$*
 
 read -s -p "Password for $USER: " PASS
+echo
 
+echo -n -e "[${purple}Closing Issues${NC}] "
 for item in $ITEMS
 do
+  echo -n "."
   if ! curl -X PUT -H "Content-Type:application/json" -u "$USER":"$PASS" -d '{"issue": {"notes": "Manually closed as the nagios alert is cleared.", "status_id": 5}}' https://support.forgeservicelab.fi/redmine/issues/"$item".json; then
     echo -e "[${red}Error${NC}] Couldn't close issue #$item. All previous issues updated correctly" >&2
     exit 1
